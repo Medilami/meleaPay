@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeleaPay</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #061a1b;
+  color: white;
+  text-align: center;
+}
+button:hover {
+  background: #008b84;
+}
+
+input, select {
+  border-radius: 5px;
+  border: none;
+}
+
+.box:hover {
+  transform: scale(1.05);
+  transition: 0.2s;
+}
+
+nav {
+  background: linear-gradient(90deg, #00a8a0, #008b84);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+
+nav a:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+nav {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+nav a.active {
+  background: white;
+  color: #00a8a0;
+}
+
+
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+  }
+
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+}
+
+.hero { padding: 50px; }
+
+.btn {
+  padding: 10px 20px;
+  background: #00a8a0;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.section { padding: 40px; }
+
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.box {
+  background: #0c2e30;
+  padding: 20px;
+  width: 200px;
+}
+
+input, select {
+  padding: 8px;
+  margin: 5px;
+}
+
+#history {
+  margin-top: 20px;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+footer {
+  background: #111;
+  padding: 10px;
+}
+
+@media(max-width:768px){
+  .features { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="#">Home</a>
+  <a href="feature.html">Features</a>
+  <a href="wallet.html">Wallet</a>
+</nav>
+
+<div class="hero">
+  <h1>MeleaPay</h1>
+  <p>Fast payments in Chad 🇹🇩</p>
+</div>
+
+<div id="features" class="section">
+  <h2>Features</h2>
+  <div class="features">
+    <div class="box">⚡ Fast Transfer</div>
+    <div class="box">🔒 Secure</div>
+    <div class="box">📱 Mobile</div>
+  </div>
+</div>
+
+<div id="app" class="section">
+
+<h2>Wallet (XAF)</h2>
+
+<!-- authentification -->
+<div id="authBox">
+  <h3>Sign Up</h3>
+  <input id="suUser" placeholder="Username"><br>
+  <input id="suPass" type="password" placeholder="Password"><br>
+  <button class="btn" onclick="signUp()">Sign Up</button>
+
+  <h3>Sign In</h3>
+  <input id="siUser" placeholder="Username"><br>
+  <input id="siPass" type="password" placeholder="Password"><br>
+  <button class="btn" onclick="signIn()">Sign In</button>
+</div>
+
+
+<div id="appBox" style="display:none;">
+
+  <h3>Welcome 👋</h3>
+  <button class="btn" onclick="logout()">Logout</button>
+
+  <h3>Balance: <span id="balance">0</span> XAF</h3>
+
+  <!-- this place for adding money -->
+  <h4>Add Money</h4>
+  <input type="number" id="addAmount" placeholder="Amount"><br>
+  <button class="btn" onclick="addMoney()">Add</button>
+
+  <!-- this is for send money -->
+  <h4>Send Money</h4>
+  <input type="number" id="amount" placeholder="Amount"><br>
+
+  <select id="city">
+    <option value="">Select City</option>
+    <option>N'Djamena</option>
+    <option>Mao</option>
+    <option>Moundou</option>
+    <option>Sarh</option>
+    <option>Doba</option>
+    <option>Pala</option>
+    <option>Koumra</option>
+    <option>Melea</option>
+  </select><br>
+
+  <button class="btn" onclick="sendMoney()">Send</button>
+
+  <p id="result"></p>
+
+  <h4>Transaction History</h4>
+  <div id="history"></div>
+
+</div>
+
+</div>
+
+<footer>
+  <p>© 2026 MeleaPay</p>
+</footer>
+
+<script>
+let user = "";
+let pass = "";
+let balance = 0;
+let history = [];
+
+// Sign up
+function signUp() {
+  user = suUser.value;
+  pass = suPass.value;
+  if(user && pass){
+    alert("Account created!");
+  } else {
+    alert("Fill all fields");
+  }
+}
+
+// Sign in
+function signIn() {
+  if(siUser.value === user && siPass.value === pass){
+    authBox.style.display = "none";
+    appBox.style.display = "block";
+    updateBalance();
+  } else {
+    alert("Wrong login");
+  }
+}
+
+// LOGOUT
+function logout() {
+  authBox.style.display = "block";
+  appBox.style.display = "none";
+}
+
+// UPDATE BALANCE
+function updateBalance() {
+  document.getElementById("balance").innerText = balance;
+}
+
+// ADD MONEY
+function addMoney() {
+  let amt = Number(addAmount.value);
+
+  if(amt > 0){
+    balance += amt;
+    history.push("➕ Added " + amt + " XAF");
+    updateBalance();
+    showHistory();
+  } else {
+    alert("Enter valid amount");
+  }
+}
+
+// SEND MONEY
+function sendMoney() {
+  let amt = Number(amount.value);
+  let city = document.getElementById("city").value;
+
+  let allowedCities = [
+    "N'Djamena", "Mao", "Moundou", "Sarh", "Doba", "Pala", "Koumra"
+  ];
+
+  if(amt <= 0 || city === ""){
+    alert("Fill all fields");
+    return;
+  }
+
+  if(amt > balance){
+    result.innerText = "❌ Not enough balance";
+    return;
+  }
+
+  if(allowedCities.includes(city)){
+    balance -= amt;
+    result.innerText = "✅ Sent " + amt + " XAF to " + city;
+    history.push("➖ Sent " + amt + " XAF to " + city);
+    updateBalance();
+    showHistory();
+  } else {
+    result.innerText = "❌ Only allowed in Chad cities";
+  }
+}
+
+// SHOW HISTORY
+function showHistory() {
+  let html = "";
+  history.forEach(item => {
+    html += "<p>" + item + "</p>";
+  });
+  document.getElementById("history").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
